@@ -1,7 +1,7 @@
 body {
     font-family: sans-serif;
-    background-color: #f0f0f0;
-    color: #333;
+    background-color: #121212; /* Dark background */
+    color: #e0e0e0; /* Light text */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -9,25 +9,25 @@ body {
 }
 
 h1 {
-    color: #5a2a8a;
+    color: #bb86fc; /* A nice purple for dark theme */
 }
 
 h2 {
-    color: #444;
-    border-bottom: 2px solid #ddd;
+    color: #e0e0e0;
+    border-bottom: 2px solid #333; /* Darker border */
     padding-bottom: 5px;
     margin-top: 30px;
 }
 
 #resources, #actions {
-    background-color: #fff;
-    border: 1px solid #ccc;
+    background-color: #1e1e1e; /* Slightly lighter dark boxes */
+    border: 1px solid #333;
     border-radius: 8px;
     padding: 20px;
     margin-bottom: 20px;
     width: 80%;
     max-width: 500px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
 #resources p {
@@ -36,11 +36,12 @@ h2 {
 }
 
 button {
-    background-color: #7d3c98;
-    color: white;
+    background-color: #bb86fc;
+    color: #121212; /* Dark text on buttons */
     border: none;
     padding: 15px 25px;
     font-size: 1em;
+    font-weight: bold;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
@@ -48,10 +49,11 @@ button {
 }
 
 button:hover {
-    background-color: #5a2a8a;
+    background-color: #9e6ed4;
 }
 
 button:disabled {
-    background-color: #ccc;
+    background-color: #444;
+    color: #888;
     cursor: not-allowed;
 }

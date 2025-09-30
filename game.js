@@ -17,18 +17,27 @@ let gameState = {
 
 // --- Game Logic ---
 
-// Function to update the resource display
-function updateResourceDisplay() {
+// Function to update the entire UI based on the current game state
+function updateUI() {
+    // Update resource counts
     manaShardsCountSpan.textContent = gameState.manaShards;
     glimmerCountSpan.textContent = gameState.glimmer;
-    // Disable build button if not enough resources
+
+    // Update button states
     buildManaCondenserButton.disabled = gameState.manaShards < gameState.manaCondenser.cost;
+
+    // Hide the build button if a condenser is already owned
+    if (gameState.manaCondenser.owned > 0) {
+        buildManaCondenserButton.style.display = 'none';
+    } else {
+        buildManaCondenserButton.style.display = 'inline-block';
+    }
 }
 
 // Function to gather Mana Shards manually
 function gatherManaShards() {
     gameState.manaShards++;
-    updateResourceDisplay();
+    updateUI();
 }
 
 // Function to build a Mana Condenser
@@ -36,10 +45,22 @@ function buildManaCondenser() {
     if (gameState.manaShards >= gameState.manaCondenser.cost) {
         gameState.manaShards -= gameState.manaCondenser.cost;
         gameState.manaCondenser.owned++;
-        // For this simple version, we'll just hide the button after one is built
-        // to prevent building more than one.
-        buildManaCondenserButton.style.display = 'none';
-        updateResourceDisplay();
+        updateUI();
+    }
+}
+
+// --- Game Logic ---
+
+// Function to save the game state to Local Storage
+function saveGame() {
+    localStorage.setItem('magicalAlchemistSave', JSON.stringify(gameState));
+}
+
+// Function to load the game state from Local Storage
+function loadGame() {
+    const savedGame = localStorage.getItem('magicalAlchemistSave');
+    if (savedGame) {
+        gameState = JSON.parse(savedGame);
     }
 }
 
@@ -48,16 +69,23 @@ gatherManaShardsButton.addEventListener('click', gatherManaShards);
 buildManaCondenserButton.addEventListener('click', buildManaCondenser);
 
 
-// --- Game Loop ---
-// This loop runs every second (1000 milliseconds)
+// --- Game Loops ---
+// This loop runs every second for resource generation
 setInterval(() => {
     // If the player owns a Mana Condenser, generate Glimmer
     if (gameState.manaCondenser.owned > 0) {
         gameState.glimmer += gameState.manaCondenser.productionRate;
-        updateResourceDisplay();
+        updateUI();
     }
 }, 1000);
 
+// This loop runs every 3 seconds for saving
+setInterval(() => {
+    saveGame();
+}, 3000);
+
+
 // --- Initial Setup ---
-// Initialize the display when the game loads
-updateResourceDisplay();
+// Load saved game data, then update the UI to reflect the loaded state
+loadGame();
+updateUI();
