@@ -91,11 +91,15 @@ button:disabled {
 
 .slot.occupied {
     border-style: solid;
-    border-color: #bb86fc;
+    border-color: #bb86fc; /* Purple for Condenser */
     background-color: #3c3c3c;
     color: #e0e0e0;
     font-weight: bold;
     text-align: center;
+}
+
+.slot.occupied.weaver {
+    border-color: #03dac6; /* Teal for Weaver */
 }
 
 /* Modal/Popup Styles */

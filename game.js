@@ -3,6 +3,8 @@
 const manaShardsCountSpan = document.getElementById('mana-shards-count');
 const glimmerCountSpan = document.getElementById('glimmer-count');
 const glimmerRateSpan = document.getElementById('glimmer-rate');
+const aetherCountSpan = document.getElementById('aether-count');
+const aetherRateSpan = document.getElementById('aether-rate');
 
 // Main Actions
 const gatherManaShardsButton = document.getElementById('gather-mana-shards');
@@ -20,6 +22,7 @@ const buildingSlots = [
 const workshopModal = document.getElementById('workshop-modal');
 const closeWorkshopBtn = document.querySelector('.close-btn');
 const buildManaCondenserBtn = document.getElementById('build-mana-condenser-btn');
+const buildGlimmerWeaverBtn = document.getElementById('build-glimmer-weaver-btn');
 const upgradeCondenserBtn = document.getElementById('upgrade-condenser-btn');
 const unlockSlot2Btn = document.getElementById('unlock-slot-2-btn');
 const unlockSlot3Btn = document.getElementById('unlock-slot-3-btn');
@@ -30,12 +33,18 @@ const unlockSlot4Btn = document.getElementById('unlock-slot-4-btn');
 let gameState = {
     manaShards: 0,
     glimmer: 0,
-    slots: ['empty', 'locked', 'locked', 'locked'], // States: 'locked', 'empty', 'occupied'
+    aether: 0,
+    slots: ['empty', 'locked', 'locked', 'locked'], // States: 'locked', 'empty', 'condenser', 'weaver'
     condenser: {
         buildCost: 10,
         efficiency: 1, // Glimmer per second per condenser
         upgradeCost: 25,
         upgradeLevel: 0,
+    },
+    weaver: {
+        buildCost: 100, // Glimmer
+        consumes: 2, // Glimmer per second
+        produces: 1, // Aether per second
     },
     slotCosts: {
         2: 50,
@@ -48,18 +57,34 @@ let gameState = {
 function updateUI() {
     // Update resource displays
     manaShardsCountSpan.textContent = gameState.manaShards;
-    glimmerCountSpan.textContent = gameState.glimmer;
-    const occupiedSlots = gameState.slots.filter(s => s === 'occupied').length;
-    const currentRate = occupiedSlots * gameState.condenser.efficiency;
-    glimmerRateSpan.textContent = currentRate;
+    glimmerCountSpan.textContent = Math.floor(gameState.glimmer); // Show whole numbers
+    aetherCountSpan.textContent = gameState.aether;
+
+    const condenserCount = gameState.slots.filter(s => s === 'condenser').length;
+    const weaverCount = gameState.slots.filter(s => s === 'weaver').length;
+
+    const glimmerRate = (condenserCount * gameState.condenser.efficiency) - (weaverCount * gameState.weaver.consumes);
+    glimmerRateSpan.textContent = glimmerRate;
+
+    const aetherRate = weaverCount * gameState.weaver.produces;
+    aetherRateSpan.textContent = aetherRate;
 
     // Update building slots display
     gameState.slots.forEach((status, index) => {
         const slot = buildingSlots[index];
         slot.className = 'slot'; // Reset classes
-        slot.classList.add(status);
-        if (status === 'occupied') {
+        slot.classList.add(status); // Add the specific status class ('locked', 'empty', 'condenser', 'weaver')
+
+        // If it's a machine, also add the generic 'occupied' class for styling
+        if (status === 'condenser' || status === 'weaver') {
+            slot.classList.add('occupied');
+        }
+
+        // Now set the text content
+        if (status === 'condenser') {
             slot.textContent = 'Mana Condenser';
+        } else if (status === 'weaver') {
+            slot.textContent = 'Glimmer Weaver';
         } else if (status === 'empty') {
             slot.textContent = 'Empty Slot';
         } else {
@@ -70,6 +95,7 @@ function updateUI() {
     // Update workshop button states
     const hasEmptySlot = gameState.slots.includes('empty');
     buildManaCondenserBtn.disabled = gameState.manaShards < gameState.condenser.buildCost || !hasEmptySlot;
+    buildGlimmerWeaverBtn.disabled = gameState.glimmer < gameState.weaver.buildCost || !hasEmptySlot;
 
     upgradeCondenserBtn.disabled = gameState.glimmer < gameState.condenser.upgradeCost;
     if (gameState.condenser.upgradeLevel > 0) {
@@ -106,7 +132,16 @@ function buildCondenser() {
     const emptySlotIndex = gameState.slots.findIndex(s => s === 'empty');
     if (emptySlotIndex !== -1 && gameState.manaShards >= gameState.condenser.buildCost) {
         gameState.manaShards -= gameState.condenser.buildCost;
-        gameState.slots[emptySlotIndex] = 'occupied';
+        gameState.slots[emptySlotIndex] = 'condenser';
+        updateUI();
+    }
+}
+
+function buildWeaver() {
+    const emptySlotIndex = gameState.slots.findIndex(s => s === 'empty');
+    if (emptySlotIndex !== -1 && gameState.glimmer >= gameState.weaver.buildCost) {
+        gameState.glimmer -= gameState.weaver.buildCost;
+        gameState.slots[emptySlotIndex] = 'weaver';
         updateUI();
     }
 }
@@ -131,16 +166,16 @@ function unlockSlot(slotNumber) {
 
 // --- Persistence ---
 function saveGame() {
-    // Using a new key for the new game state structure to avoid conflicts
-    localStorage.setItem('magicalAlchemistSave_v3', JSON.stringify(gameState));
+    localStorage.setItem('magicalAlchemistSave_v4', JSON.stringify(gameState));
 }
 
 function loadGame() {
-    const savedGame = localStorage.getItem('magicalAlchemistSave_v3');
+    const savedGame = localStorage.getItem('magicalAlchemistSave_v4');
     if (savedGame) {
         const loadedState = JSON.parse(savedGame);
-        // Use Object.assign to merge loaded state, preventing errors if new properties are added to the default state later.
-        Object.assign(gameState, loadedState);
+        // A simple merge that will handle new top-level properties but not deep-nested ones.
+        // Good enough for this stage of development.
+        gameState = { ...gameState, ...loadedState };
     }
 }
 
@@ -155,6 +190,7 @@ window.addEventListener('click', (event) => {
 });
 
 buildManaCondenserBtn.addEventListener('click', buildCondenser);
+buildGlimmerWeaverBtn.addEventListener('click', buildWeaver);
 upgradeCondenserBtn.addEventListener('click', upgradeCondenser);
 unlockSlot2Btn.addEventListener('click', () => unlockSlot(2));
 unlockSlot3Btn.addEventListener('click', () => unlockSlot(3));
@@ -163,9 +199,29 @@ unlockSlot4Btn.addEventListener('click', () => unlockSlot(4));
 // --- Game Loops ---
 // Production loop (every second)
 setInterval(() => {
-    const occupiedSlots = gameState.slots.filter(s => s === 'occupied').length;
-    if (occupiedSlots > 0) {
-        gameState.glimmer += occupiedSlots * gameState.condenser.efficiency;
+    let glimmerProduced = 0;
+    let glimmerConsumed = 0;
+    let aetherProduced = 0;
+
+    // 1. Calculate Glimmer production
+    const condenserCount = gameState.slots.filter(s => s === 'condenser').length;
+    glimmerProduced = condenserCount * gameState.condenser.efficiency;
+    gameState.glimmer += glimmerProduced;
+
+    // 2. Calculate Glimmer consumption and Aether production
+    const weaverCount = gameState.slots.filter(s => s === 'weaver').length;
+    glimmerConsumed = weaverCount * gameState.weaver.consumes;
+
+    if (weaverCount > 0) {
+        if (gameState.glimmer >= glimmerConsumed) {
+            gameState.glimmer -= glimmerConsumed;
+            aetherProduced = weaverCount * gameState.weaver.produces;
+            gameState.aether += aetherProduced;
+        }
+    }
+
+    // 3. Update the UI only if resources have changed
+    if (glimmerProduced > 0 || glimmerConsumed > 0 || aetherProduced > 0) {
         updateUI();
     }
 }, 1000);
