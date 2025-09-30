@@ -12,13 +12,43 @@
     <div id="resources">
         <h2>Resources</h2>
         <p>Mana Shards: <span id="mana-shards-count">0</span></p>
-        <p>Glimmer: <span id="glimmer-count">0</span></p>
+        <p>Glimmer: <span id="glimmer-count">0</span> (<span id="glimmer-rate">0</span>/s)</p>
     </div>
 
-    <div id="actions">
-        <h2>Actions</h2>
+    <div id="main-actions">
         <button id="gather-mana-shards">Gather Mana Shard</button>
-        <button id="build-mana-condenser">Build Mana Condenser (Cost: 10 Mana Shards)</button>
+        <button id="open-workshop-btn">Open Workshop</button>
+    </div>
+
+    <div id="building-slots-container">
+        <h2>Building Slots</h2>
+        <div class="building-slots">
+            <div id="slot-1" class="slot locked">Slot 1</div>
+            <div id="slot-2" class="slot locked">Slot 2</div>
+            <div id="slot-3" class="slot locked">Slot 3</div>
+            <div id="slot-4" class="slot locked">Slot 4</div>
+        </div>
+    </div>
+
+    <!-- The Workshop Popup/Modal -->
+    <div id="workshop-modal" class="modal-hidden">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Workshop</h2>
+
+            <div id="workshop-actions">
+                <h3>Build</h3>
+                <button id="build-mana-condenser-btn">Build Mana Condenser (Cost: 10 Mana Shards)</button>
+
+                <h3>Upgrades</h3>
+                <button id="upgrade-condenser-btn">Improve Condensers (Cost: 25 Glimmer)</button>
+
+                <h3>Expand</h3>
+                <button id="unlock-slot-2-btn">Unlock Slot 2 (Cost: 50 Glimmer)</button>
+                <button id="unlock-slot-3-btn">Unlock Slot 3 (Cost: 150 Glimmer)</button>
+                <button id="unlock-slot-4-btn">Unlock Slot 4 (Cost: 300 Glimmer)</button>
+            </div>
+        </div>
     </div>
 
     <script src="game.js"></script>
