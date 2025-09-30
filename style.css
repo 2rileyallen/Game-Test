@@ -162,3 +162,68 @@ button:disabled {
     text-align: left;
     padding: 15px;
 }
+
+/* Combat Screen Styles */
+.hidden {
+    display: none !important;
+}
+
+#combat-screen {
+    width: 100%;
+    max-width: 800px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+#combat-ui {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+}
+
+#combat-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    width: 100%;
+    height: 300px;
+    border: 2px solid #bb86fc;
+    background-color: #000;
+    position: relative; /* This is crucial for positioning bullets */
+}
+
+.grid-cell {
+    border: 1px solid #333;
+    position: relative;
+}
+
+/* Player and Enemy Styles */
+.player {
+    background-color: #03dac6;
+    width: 80%;
+    height: 80%;
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    border-radius: 4px;
+}
+
+.enemy {
+    background-color: #cf6679;
+    width: 80%;
+    height: 80%;
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    border-radius: 4px;
+}
+
+/* Bullet Styles */
+.bullet {
+    position: absolute;
+    width: 20px;
+    height: 8px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+}

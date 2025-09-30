@@ -19,6 +19,7 @@
     <div id="main-actions">
         <button id="gather-mana-shards">Gather Mana Shard</button>
         <button id="open-workshop-btn">Open Workshop</button>
+        <button id="enter-combat-btn">Enter Combat (Cost: 10 Aether)</button>
     </div>
 
     <div id="building-slots-container">
@@ -51,6 +52,18 @@
                 <button id="unlock-slot-4-btn">Unlock Slot 4 (Cost: 300 Glimmer)</button>
             </div>
         </div>
+    </div>
+
+    <!-- Combat Screen -->
+    <div id="combat-screen" class="hidden">
+        <div id="combat-ui">
+            <div class="hp-display">Player HP: <span id="player-hp">100</span></div>
+            <div class="hp-display">Enemy HP: <span id="enemy-hp">100</span></div>
+        </div>
+        <div id="combat-grid">
+            <!-- Grid will be populated by JavaScript -->
+        </div>
+        <button id="exit-combat-btn">Exit Combat</button>
     </div>
 
     <script src="game.js"></script>
